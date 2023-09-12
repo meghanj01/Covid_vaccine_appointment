@@ -1,0 +1,122 @@
+swagger: "2.0"
+info:
+  title: "COVID Vaccine Appointments API"
+  version: "1.0"
+  description: "API for booking and managing appointments."
+paths:
+  /book_appointment/:
+    post:
+      tags:
+        - Appointments
+      summary: Book an appointment
+      description: Book an appointment slot.
+      consumes:
+        - application/json  # Add this line if you're sending JSON data
+      parameters:
+        - in: body
+          name: appointment
+          required: true
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              time:
+                type: string
+                format: time
+      responses:
+        200:
+          description: Appointment booked successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              status_code:
+                type: integer
+                format: int32
+        400:
+          description: Invalid date or time format
+        404:
+          description: Slot not found
+  /check_availability/:
+    get:
+      tags:
+        - Appointments
+      summary: "Check the availability of an appointment slot."
+      parameters:
+        - name: date
+          in: query
+          type: string
+          format: date
+          required: true
+          description: "The date of the appointment (YYYY-MM-DD)."
+        - name: time
+          in: query
+          type: string
+          format: time
+          required: true
+          description: "The time of the appointment (hh:mm AM/PM)."
+      responses:
+        200:
+          description: "Appointment slot availability status."
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "A status message."
+        400:
+          description: "Bad Request"
+  /cancel_appointment/{appointment_id}:
+    post:
+      tags:
+        - Appointments
+      summary: "Cancel an existing appointment."
+      parameters:
+        - name: appointment_id
+          in: path
+          type: string
+          required: true
+          description: "The ID of the appointment to cancel."
+      responses:
+        200:
+          description: "Appointment canceled successfully."
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "A success message."
+        400:
+          description: "Bad Request"
+        404:
+          description: "Appointment not found"
+  /list_appointments:
+    get:
+      tags:
+        - Appointments
+      summary: "List all appointments."
+      responses:
+        200:
+          description: "A list of all appointments."
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: "The appointment ID."
+                date:
+                  type: string
+                  format: date
+                  description: "The date of the appointment (YYYY-MM-DD)."
+                time:
+                  type: string
+                  format: time
+                  description: "The time of the appointment (hh:mm AM/PM)."
+                available:
+                  type: boolean
+                  description: "Indicates if the appointment slot is available."
